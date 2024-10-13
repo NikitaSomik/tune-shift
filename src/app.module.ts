@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { PlaylistService } from './playlist.service';
-import { PlaylistController } from './playlist.controller';
+import { MusicModule } from './music/music.module';
+import { RouterModule } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -8,8 +8,13 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    MusicModule,
+    RouterModule.register([
+      {
+        path: 'music',
+        module: MusicModule,
+      },
+    ]),
   ],
-  controllers: [PlaylistController],
-  providers: [PlaylistService],
 })
 export class AppModule {}

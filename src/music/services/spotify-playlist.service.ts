@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PlaylistIdNotFoundException } from '../exceptions/playlist-id-not-found.exception';
 
 @Injectable()
-export class PlaylistService {
+export class SpotifyPlaylistService {
   constructor(private readonly configService: ConfigService) {}
 
   async getAccessToken(): Promise<string> {
@@ -40,7 +41,7 @@ export class PlaylistService {
   }
 
   async savePlaylist(playlist) {
-    console.log('Saving playlist:', playlist);
+    console.log('SpotifyPlaylistService Saving playlist:', playlist);
     // playlist.tracks?.items?.map(() => {});
   }
 
@@ -65,10 +66,15 @@ export class PlaylistService {
   }
 
   private extractPlaylistId(playlistUrl: string): string {
-    console.log('extractPlaylistId: ', playlistUrl);
-    const urlParts = playlistUrl.split('/');
-    const playlistIdWithParams = urlParts[urlParts.length - 1];
-    const playlistId = playlistIdWithParams.split('?')[0];
+    const url = new URL(playlistUrl);
+    const pathParts = url.pathname.split('/');
+
+    const playlistId = pathParts[pathParts.length - 1];
+
+    if (!playlistId) {
+      throw new PlaylistIdNotFoundException();
+    }
+
     return playlistId;
   }
 }

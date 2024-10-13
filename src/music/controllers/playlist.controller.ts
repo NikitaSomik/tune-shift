@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
-import { PlaylistService } from './playlist.service';
+import { PlaylistService } from '../services/playlist.service';
 import { Response } from 'express';
 
 @Controller('playlists')
@@ -10,11 +10,8 @@ export class PlaylistController {
   async importPlaylist(@Body() body: any, @Res() res: Response) {
     const { url } = body;
 
-    console.log('PlaylistController: ', url);
-
-    const playlist = await this.playlistService.importFromPlatform(url);
-
-    await this.playlistService.savePlaylist(playlist);
+    const playlist = await this.playlistService.importPlaylist(url);
+    // return playlist;
 
     return res.json({
       status: 'success',
